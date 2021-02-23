@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request, Response } from "express";
-import { CreateAccountDto, LoginAccountDto } from "./account.dto";
+import { AddNewUserDto, CreateAccountDto, LoginAccountDto } from "./account.dto";
 import { AccountService } from "./account.service";
+import { AdminGuard } from "./admin.guard";
 
 @ApiTags("Accounts")
 @Controller("accounts")
@@ -57,4 +58,21 @@ export class AccountController {
             return;
         }
     }
+
+    
+    @ApiBearerAuth()
+    @HttpCode(200)
+    @Post("/users")
+    @UseGuards(AdminGuard)
+    async addNewUser(@Res() res:Response, @Body() user:AddNewUserDto) {
+        try {
+            let resp = await this._accountService.addUser(res.locals.account.customer, user.name, user.email, user.password, user.isAdmin);
+            res.status(HttpStatus.CREATED).json(resp);
+            return;
+        } catch (err) {
+            res.status(HttpStatus.BAD_REQUEST).json(err.message);
+            return;
+        }
+    }
+
 }

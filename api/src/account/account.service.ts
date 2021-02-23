@@ -43,7 +43,8 @@ export class AccountService {
                     user: user.uuid,
                     customer: user.customer.uuid,
                     email: user.email,
-                    is_verified: user.isVerified
+                    is_verified: user.isVerified,
+                    is_admin: user.isAdmin
                 }
                 let jwtToken:string = this._jwt.sign(data, this._appsecret, {expiresIn: 24*60*60*30})
                 return {
@@ -63,15 +64,29 @@ export class AccountService {
         try {
           let decoded = this._jwt.verify(token, this._appsecret);
           if (decoded) {
-            return { 
-                user: decoded['user'],
-                customer: decoded['customer']
-            };
+            return decoded;
           } else {
             throw new Error('Invalid Token');
           }
         } catch (err) {
           throw new Error(err.message);
+        }
+    }
+
+    public async addUser(customer:string, name:string, email:string, password:string, isAdmin:boolean = false): Promise<string> {
+        try {
+            let tcustomer = await this._em.findOne(Customer, { uuid: customer });
+            let tuser = new User();
+            tuser.name = name;
+            tuser.email = email;
+            tuser.isAdmin = isAdmin;
+            let hashPass = await this._bcrypt.hash(password,10);
+            tuser.customer = tcustomer;
+            tuser.password = hashPass;
+            await this._em.persistAndFlush(tuser);
+            return "User Added"
+        } catch(err) {
+            throw new Error("Unable to add user");
         }
     }
 

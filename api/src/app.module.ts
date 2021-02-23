@@ -6,7 +6,7 @@ import config from './mikro-orm.config';
 @Module({
   imports: [
     MikroOrmModule.forRoot(config),
-    AccountModule
+    AccountModule,
   ],
   controllers: [],
   providers: [],

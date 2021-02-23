@@ -24,3 +24,18 @@ export class LoginAccountDto {
     password: string;
 
 }
+
+
+export class AddNewUserDto {
+    @ApiProperty()
+    name: string
+
+    @ApiProperty()
+    email: string;
+
+    @ApiProperty()
+    password: string;
+
+    @ApiProperty()
+    isAdmin: boolean;
+}
