@@ -15,19 +15,20 @@ import { AuthMiddleware } from './auth.middleware';
         AccountService,
         BcryptLib,
         JwtLib,
-        AdminGuard
+        AdminGuard,
+        AuthMiddleware
     ],
     exports: [
         AuthMiddleware,
-        AdminGuard
+        AdminGuard,
     ]
 })
 export class AccountModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
-          .apply(AuthMiddleware)
-          .forRoutes(
+            .apply(AuthMiddleware)
+            .forRoutes(
                 { path: 'accounts/users', method: RequestMethod.ALL }
             );
-        }
+    }
 }

@@ -13,8 +13,11 @@ export class Customer {
     @OneToMany("User", "customer")
     users = new Collection(this);
 
+    @OneToMany("Feedback", "customer")
+    feedback = new Collection(this);
+
     @Property({ nullable:false, default:true })
-    isActive:boolean
+    isActive:boolean;
 
     @Property()
     createdAt: Date = new Date();

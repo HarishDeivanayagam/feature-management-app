@@ -1,24 +1,29 @@
+import { ThemeProvider } from '@material-ui/core';
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Boards from './pages/Boards';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import AccountProvider from './providers/AccountProvider';
+import AuthProtect from './providers/AuthProtect';
+import { theme } from './theme';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ThemeProvider theme={theme}>
+        <AccountProvider>
+          <BrowserRouter>
+            <Switch>
+              <Route path="/auth/login" exact component={Login}/>
+              <AuthProtect>
+                <Route path="/" exact component={Home} />
+                <Route path="/boards" exact component={Boards}/>
+              </AuthProtect>
+            </Switch>
+          </BrowserRouter>
+        </AccountProvider>
+      </ThemeProvider>
     </div>
   );
 }
