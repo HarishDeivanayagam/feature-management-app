@@ -1,0 +1,28 @@
+.List {
+    list-style-type: none;
+    width: 60px;
+}
+.ListItem {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.IconStyle {
+    border-radius: 50%;
+    padding: 5px;
+    color: white;
+}
+
+.IconStyleActive {
+    border-radius: 50%;
+    padding: 5px;
+    color: white;
+    background:#6822ff;
+}
+
+.IconStyle:hover {
+    background:#6822ff;
+    cursor: pointer;
+}

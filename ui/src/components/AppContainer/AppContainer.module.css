@@ -1,0 +1,14 @@
+.AppHolder {
+    display: flex;
+    justify-content: flex-start;
+    height: 100vh;
+}
+
+.NavHolder {
+    height: 100vh;
+    background: #4A00E7;
+}
+
+.ViewHolder {
+    margin: 1em;
+}
