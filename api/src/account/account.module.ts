@@ -2,11 +2,11 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { Customer } from 'src/database/models/customer.model';
 import { User } from 'src/database/models/user.model';
+import { AuthMiddleware } from 'src/middlewares/auth.middleware';
 import { BcryptLib, JwtLib } from 'src/misc/external.dep';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { AdminGuard } from './admin.guard';
-import { AuthMiddleware } from './auth.middleware';
 
 @Module({
     imports:[MikroOrmModule.forFeature([Customer, User])],
@@ -16,10 +16,8 @@ import { AuthMiddleware } from './auth.middleware';
         BcryptLib,
         JwtLib,
         AdminGuard,
-        AuthMiddleware
     ],
     exports: [
-        AuthMiddleware,
         AdminGuard,
     ]
 })

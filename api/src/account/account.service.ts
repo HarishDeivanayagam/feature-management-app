@@ -90,4 +90,13 @@ export class AccountService {
         }
     }
 
+    public async getUsers(customer:string) {
+        try {
+            let users = await this._em.find(User, { customer: customer });
+            return users;
+        } catch(err) {
+            throw new Error("Unable to fetch users");
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ import { useAtom } from "jotai";
 import React from "react";
 import accountAtom, { IAccountData } from '../data/accountData';
 import jwt from 'jsonwebtoken';
+import { deleteTokens } from "../metal/auth.metal";
 
 function AccountProvider(props:any) {
 
@@ -20,7 +21,11 @@ function AccountProvider(props:any) {
                 isVerified: decoded['is_verified'],
                 loggedIn: true
             }
-            setAccountData(tempAccount);
+            if(Date.now() >= decoded.exp * 1000) {
+                deleteTokens();
+            } else {
+                setAccountData(tempAccount);
+            }
         }
         setLoading(false);
     }

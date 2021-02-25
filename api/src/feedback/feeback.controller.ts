@@ -1,5 +1,5 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Put, Res } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Res } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
 import { CreateFeedbackDto, VoteFeedbackDto } from "./feedback.dto";
 import { FeedbackService } from "./feedback.service";
@@ -48,4 +48,19 @@ export class FeedbackController {
             return;
         }
     }
+
+    @HttpCode(200)
+    @Get("")
+    @ApiBearerAuth()
+    public async getAllFeedback(@Res() res:Response){
+        try {
+            let resp = await this._feedbackService.allFeedback(res.locals.account.customer);
+            res.status(HttpStatus.OK).json(resp);
+            return;
+        } catch(err) {
+            res.status(HttpStatus.BAD_REQUEST).json(err.message);
+            return;
+        }
+    }
+
 }

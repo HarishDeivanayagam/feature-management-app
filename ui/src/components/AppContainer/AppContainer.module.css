@@ -5,10 +5,12 @@
 }
 
 .NavHolder {
+    position: fixed;
     height: 100vh;
     background: #4A00E7;
 }
 
 .ViewHolder {
-    margin: 1em;
+    margin-left: 80px;
+    margin-top: 1em;
 }

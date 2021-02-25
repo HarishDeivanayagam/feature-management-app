@@ -6,7 +6,7 @@ const config: MikroOrmModuleSyncOptions = {
   type: 'postgresql',
   clientUrl: 'http://127.0.0.1:5432',
   user: 'postgres',
-  password: 'root',
+  password: '123',
   dbName: 'fmapi',
   migrations: {
     tableName: 'migrations',

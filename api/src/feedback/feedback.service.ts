@@ -48,4 +48,14 @@ export class FeedbackService {
         }
     }
 
+    public async allFeedback(customer:string) {
+        try {
+            let feedbacks = await this._em.find(Feedback, { customer: customer });
+            return feedbacks;
+        } catch(err) {
+            throw new Error("Unable to fetch data");
+        }
+    }
+
+
 }

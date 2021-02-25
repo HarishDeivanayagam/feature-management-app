@@ -9,7 +9,7 @@ export interface IAccountData {
     loggedIn: boolean;
 }
 
-export const initialState: IAccountData = {
+export const initialAccountState: IAccountData = {
     user: "",
     customer: "",
     email: "",
@@ -18,6 +18,6 @@ export const initialState: IAccountData = {
     loggedIn: false
 }
 
-const accountAtom = atom<IAccountData>(initialState);
+const accountAtom = atom<IAccountData>(initialAccountState);
 
 export default accountAtom;

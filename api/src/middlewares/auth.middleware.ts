@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { AccountService } from './account.service';
+import * as jwt from "jsonwebtoken"
+import { appsecret } from 'src/appconfig/app.config';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
 
-    constructor(private readonly _accountService:AccountService) {}
+    constructor() {}
 
     async use(req: Request, res: Response, next: NextFunction) {
         try {
@@ -15,12 +16,17 @@ export class AuthMiddleware implements NestMiddleware {
             } else {
                 let str: string[] = auth.split(' ');
                 auth = str[1];
-                let account: any = await this._accountService.ping(auth);
-                res.locals.account = account;
-                next();
+                let decoded = jwt.verify(auth, appsecret);
+                if (decoded) {
+                    res.locals.account = decoded;
+                    next();
+                } else {
+                  throw new Error('Invalid Token');
+                }
             }
         } catch(err) {
             res.status(HttpStatus.BAD_REQUEST).json(err.message);
+            return;
         }
     }
 }

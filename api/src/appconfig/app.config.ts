@@ -1,0 +1,1 @@
+export const appsecret = "DFUSKHKR(@*&!@FJDIBDSFB1513DFS";

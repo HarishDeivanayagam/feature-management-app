@@ -61,7 +61,7 @@ export class AccountController {
 
     
     @ApiBearerAuth()
-    @HttpCode(200)
+    @HttpCode(201)
     @Post("/users")
     @UseGuards(AdminGuard)
     async addNewUser(@Res() res:Response, @Body() user:AddNewUserDto) {
@@ -75,6 +75,20 @@ export class AccountController {
         }
     }
 
+    @ApiBearerAuth()
+    @HttpCode(200)
+    @Get("/users")
+    @UseGuards(AdminGuard)
+    async getMyUsers(@Res() res:Response) {
+        try {
+            let resp = await this._accountService.getUsers(res.locals.account.customer);
+            res.status(HttpStatus.OK).json(resp);
+            return;
+        } catch (err) {
+            res.status(HttpStatus.BAD_REQUEST).json(err.message);
+            return;
+        }
+    }
     
-
 }
+
