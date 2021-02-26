@@ -73,7 +73,7 @@ export class AccountService {
         }
     }
 
-    public async addUser(customer:string, name:string, email:string, password:string, isAdmin:boolean = false): Promise<string> {
+    public async addUser(customer:string, name:string, email:string, password:string, isAdmin:boolean = false): Promise<User> {
         try {
             let tcustomer = await this._em.findOne(Customer, { uuid: customer });
             let tuser = new User();
@@ -84,7 +84,7 @@ export class AccountService {
             tuser.customer = tcustomer;
             tuser.password = hashPass;
             await this._em.persistAndFlush(tuser);
-            return "User Added"
+            return tuser;
         } catch(err) {
             throw new Error("Unable to add user");
         }

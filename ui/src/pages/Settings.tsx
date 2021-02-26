@@ -10,6 +10,15 @@ import axios from "axios";
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import { useForm } from "react-hook-form";
+import { getError } from "../components/ErrorHelper";
+
+interface INewUser {
+    name:string;
+    email:string;
+    password:string;
+    isAdmin:boolean;
+}
+
 
 function Settings() {
 
@@ -17,7 +26,7 @@ function Settings() {
     const [myUsers, setMyUsers] = React.useState([]);
     const history = useHistory();
     const [open, setOpen] = React.useState<boolean>(false);
-    const {register, errors, handleSubmit} = useForm();
+    const {register, errors, handleSubmit} = useForm<INewUser>();
 
     const fetchMyUsers = async () => {
         let res = await axios.get(`${process.env["REACT_APP_API"]}/accounts/users`, {headers: getToken()})
@@ -56,6 +65,18 @@ function Settings() {
         history.push("/auth/login");
     }
 
+    const createNewUser = async (data:INewUser) => {
+        try {
+            let res:any = await axios.post(`${process.env["REACT_APP_API"]}/accounts/users`, data, {headers: getToken()});
+            let temp:any = [...myUsers];
+            temp.push(res.data);
+            setMyUsers(temp);
+            setOpen(false);
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     const classes = useStyles();
 
     return (
@@ -72,26 +93,26 @@ function Settings() {
                 >
                 <Fade in={open}>
                     <div className={classes.paper}>
-                        <h2 id="transition-modal-title">Add User</h2><br/>
-                        <TextField name="name" inputRef={register({ required:true, maxLength:50 })} id="name-input" type="text" fullWidth={true} label="User Name" variant="outlined" /><br/><br/>
-                        <TextField name="email" inputRef={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} id="email-input" type="email" fullWidth={true} label="Email Address" variant="outlined" /><br/><br/>
-                        <TextField name="password" inputRef={register({ required: true })} id="password-input" type="password" fullWidth={true} label="Password" variant="outlined" /><br/><br/>
-                        <FormControlLabel
-                            control={
-                            <Checkbox
-                                checked={false}
-                                onChange={()=>{}}
-                                name="checkedB"
-                                color="primary"
+                        <form onSubmit={handleSubmit(createNewUser)}>
+                            <h2 id="transition-modal-title">Add User</h2><br/>
+                            <TextField error={errors.name?true:false} helperText={errors.name?getError(errors.name.type):null} name="name" inputRef={register({ required:true, maxLength:50 })} id="createuser-name-input" type="name" fullWidth={true} label="User Name" variant="outlined" /><br/><br/>
+                            <TextField error={errors.email?true:false} helperText={errors.email?getError(errors.email.type):null} name="email" inputRef={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} id="createuser-email-input" type="email" fullWidth={true} label="Email Address" variant="outlined" /><br/><br/>
+                            <TextField error={errors.password?true:false} helperText={errors.password?getError(errors.password.type):null} name="password" inputRef={register({ required: true })} id="createuser-password-input" type="password" fullWidth={true} label="Password" variant="outlined" /><br/><br/>
+                            <FormControlLabel
+                                control={
+                                <Checkbox
+                                    id="password-input"
+                                    inputRef={register()}
+                                    name="isAdmin"
+                                    color="primary"
+                                />
+                                }
+                                label="Admin User"
                             />
-                            }
-                            label="Admin User"
-                        />
-                        <Button type="submit" size="large" variant="contained" color="primary" fullWidth={true} disableElevation>Create User</Button>
-
+                            <Button type="submit" size="large" variant="contained" color="primary" fullWidth={true} disableElevation>Create User</Button>
+                        </form>
                     </div>
                 </Fade>
-
             </Modal>
 
             <h1>Settings</h1><br/><br/>
