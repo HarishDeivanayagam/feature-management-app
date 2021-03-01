@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 import React from "react";
 import accountAtom, { IAccountData } from '../data/accountData';
 import jwt from 'jsonwebtoken';
-import { deleteTokens } from "../metal/auth.metal";
+import { deleteTokens } from "../metal/auth";
 
 function AccountProvider(props:any) {
 

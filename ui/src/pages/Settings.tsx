@@ -1,26 +1,28 @@
-import { Button, Checkbox, createMuiTheme, Divider, FormControlLabel, makeStyles, Modal, TextField, ThemeProvider } from "@material-ui/core";
-import { useAtom } from "jotai";
 import React from "react";
-import AppContainer from "../components/AppContainer/AppContainer";
+import AppContainer from "../components/AppContainer";
 import accountAtom, { initialAccountState } from "../data/accountData";
-import {deleteTokens, getToken} from "../metal/auth.metal";
+import {deleteTokens, getToken} from "../metal/auth";
 import {useHistory} from "react-router-dom";
-import { red } from '@material-ui/core/colors';
 import axios from "axios";
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
 import { useForm } from "react-hook-form";
 import { getError } from "../components/ErrorHelper";
+import { useAtom } from "jotai";
+import Button from "../components/Button";
+import { API_URL } from "../config";
+import Modal from "../components/Modal";
+import Input from "../components/Input";
 
 interface INewUser {
     name:string;
     email:string;
     password:string;
-    isAdmin:boolean;
+    isAdmin:any;
 }
 
 
 function Settings() {
+
+
 
     const [accountData, setAccountData] = useAtom(accountAtom);
     const [myUsers, setMyUsers] = React.useState([]);
@@ -29,7 +31,7 @@ function Settings() {
     const {register, errors, handleSubmit} = useForm<INewUser>();
 
     const fetchMyUsers = async () => {
-        let res = await axios.get(`${process.env["REACT_APP_API"]}/accounts/users`, {headers: getToken()})
+        let res = await axios.get(`${API_URL}/accounts/users`, {headers: getToken()})
         setMyUsers(res.data);
     }
 
@@ -39,26 +41,6 @@ function Settings() {
         }
     },[])
 
-    const theme = createMuiTheme({
-        palette: {
-          primary: red,
-        },
-    });
-    
-    const useStyles = makeStyles((theme) => ({
-        modal: {
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        paper: {
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: theme.shadows[5],
-          padding: theme.spacing(2, 4, 3),
-          outline: 'none'
-        },
-      }));
-
     const logOut = () => {
         deleteTokens();
         setAccountData(initialAccountState);
@@ -66,8 +48,14 @@ function Settings() {
     }
 
     const createNewUser = async (data:INewUser) => {
+        if(data['isAdmin'].length===0) {
+            data['isAdmin'] = false;
+        }
+        if(data['isAdmin'][0]==='on') {
+            data['isAdmin'] = true;
+        }
         try {
-            let res:any = await axios.post(`${process.env["REACT_APP_API"]}/accounts/users`, data, {headers: getToken()});
+            let res:any = await axios.post(`${API_URL}/accounts/users`, data, {headers: getToken()});
             let temp:any = [...myUsers];
             temp.push(res.data);
             setMyUsers(temp);
@@ -77,60 +65,43 @@ function Settings() {
         }
     }
 
-    const classes = useStyles();
+
 
     return (
-        <AppContainer path="Settings">
-            <Modal 
-                open={open} 
-                onClose={()=>{setOpen(false)}}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                  timeout: 500,
-                }}
-                className={classes.modal}
-                >
-                <Fade in={open}>
-                    <div className={classes.paper}>
-                        <form onSubmit={handleSubmit(createNewUser)}>
-                            <h2 id="transition-modal-title">Add User</h2><br/>
-                            <TextField error={errors.name?true:false} helperText={errors.name?getError(errors.name.type):null} name="name" inputRef={register({ required:true, maxLength:50 })} id="createuser-name-input" type="name" fullWidth={true} label="User Name" variant="outlined" /><br/><br/>
-                            <TextField error={errors.email?true:false} helperText={errors.email?getError(errors.email.type):null} name="email" inputRef={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} id="createuser-email-input" type="email" fullWidth={true} label="Email Address" variant="outlined" /><br/><br/>
-                            <TextField error={errors.password?true:false} helperText={errors.password?getError(errors.password.type):null} name="password" inputRef={register({ required: true })} id="createuser-password-input" type="password" fullWidth={true} label="Password" variant="outlined" /><br/><br/>
-                            <FormControlLabel
-                                control={
-                                <Checkbox
-                                    id="password-input"
-                                    inputRef={register()}
-                                    name="isAdmin"
-                                    color="primary"
-                                />
-                                }
-                                label="Admin User"
-                            />
-                            <Button type="submit" size="large" variant="contained" color="primary" fullWidth={true} disableElevation>Create User</Button>
-                        </form>
+        <AppContainer path="/settings">
+            {open?<Modal>
+                <form name="create-user-form" onSubmit={handleSubmit(createNewUser)}>
+                    <p className="text-right text-red-700 cursor-pointer" onClick={()=>{setOpen(false)}}>Close</p>
+                    <label htmlFor="adduser-name-input" id="adduser-name-label">Name</label>
+                    <Input name="name" id="adduser-name-input" ref={register({ required:true, maxLength:20})} type="text" placeholder="Enter UserName" error={errors.email?getError(errors.email.type):null}/>
+                    <br/>
+                    <label htmlFor="adduser-email-input" id="adduser-email-label">Email Address</label>
+                    <Input name="email" id="adduser-email-input" ref={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} type="email" placeholder="Enter Email Address" error={errors.email?getError(errors.email.type):null}/>
+                    <br/>
+                    <label htmlFor="adduser-password-input" id="adduser-password-label">Password</label>
+                    <Input name="password" id="adduser-password-input" ref={register({ required:true, maxLength:80, minLength:3 })} type="password" placeholder="Enter Password" error={errors.password?getError(errors.password.type):null}/>
+                    <div className="mt-3 mb-3">
+                        <input type="checkbox" name="isAdmin" ref={register}/><span> This is an admin user</span>
                     </div>
-                </Fade>
-            </Modal>
-
-            <h1>Settings</h1><br/><br/>
-            <h2>User</h2><br/>
-            <p>{accountData.email}</p><br/>
-            <ThemeProvider theme={theme}>
-                <Button onClick={logOut} variant="contained" color="primary" disableElevation>Logout</Button><br/><br/>
-            </ThemeProvider>
-            <Divider /><br/><br/>
-            {accountData.isAdmin?
-                <div>
-                    <h2>Admin Settings</h2><br/>
-                    <Button onClick={()=>{setOpen(true)}} variant="contained" color="primary" disableElevation>Add User</Button><br/><br/>
-                    {myUsers!==[]?myUsers.map((elm:any, index:any)=>{
-                        return <div key={index}><a>{elm.name} - {elm.email}</a><span> </span><a>Edit</a></div>
-                    }):null}
-                </div>
-            :null}
+                    <Button id="adduser-button" type="submit">Create User</Button>
+                </form>
+            </Modal>:null}
+            <div className="w-2/12">
+                <h1 className="mb-4">Settings</h1>
+                <h2 className="mb-4">User</h2>
+                <p>{accountData.email}</p><br/>
+                <Button onClick={logOut} color="red">Logout</Button><br/>
+                <span>----------------------------------</span><br/><br/>
+                {accountData.isAdmin?
+                    <div>
+                        <h2 className="mb-2">Admin Settings</h2>
+                        <Button onClick={()=>{setOpen(true)}}>Add User</Button><br/><br/>
+                        {myUsers!==[]?myUsers.map((elm:any, index:any)=>{
+                            return <div key={index}><a>{elm.name} - {elm.email}</a><span> </span><a className="text-blue-700 cursor-pointer">Edit</a></div>
+                        }):null}
+                    </div>
+                :null}
+            </div>
         </AppContainer>
     )
 }

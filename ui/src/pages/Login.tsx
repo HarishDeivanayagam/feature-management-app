@@ -1,30 +1,40 @@
-import { Button, TextField } from '@material-ui/core';
+import React from "react";
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
 import { getError } from '../components/ErrorHelper';
-import InfoSplit from '../components/InfoSplit/InfoSplit';
 import accountAtom, { IAccountData } from '../data/accountData';
-import styles from './Page.module.css';
 import jwt from 'jsonwebtoken';
+import Input from "../components/Input";
+import Button from "../components/Button";
+import AuthHolder from "../components/AuthHolder";
+import { API_URL } from "../config";
 
 interface ILoginData {
     email:string;
     password:string;
 }
 
+
 function Login() {
 
     const {register, errors, handleSubmit} = useForm<ILoginData>();
     const [error, setError] = React.useState<string>('');
     const history = useHistory();
-    const [, setAccountData] = useAtom(accountAtom);
+    const [accountData, setAccountData] = useAtom(accountAtom);
+    const [loading, setLoading] = React.useState<boolean>(true);
+
+    React.useEffect(()=>{
+        if(accountData.loggedIn) {
+            history.push("/");
+        }
+        setLoading(false);
+    },[])
 
     const doLogin = async (data:ILoginData) => {
         try {
-            let res:any = await axios.post(`${process.env["REACT_APP_API"]}/accounts/authenticate`, data);
+            let res:any = await axios.post(`${API_URL}/accounts/authenticate`, data);
             let decoded:any = jwt.decode(res['data']['authToken'], {json: true});
             setError("");
             let tempAccount: IAccountData = {
@@ -45,18 +55,23 @@ function Login() {
             setError("User Doesnot Exist"); 
         }
     }
+
+    if(loading) return <div>Loading...</div>
+
     return (
-        <InfoSplit>
-            <form className={styles.loginForm} onSubmit={handleSubmit(doLogin)}>
-                <h1 className={styles.center}>Login</h1><br/><br/>
-                <TextField error={errors.email?true:false} helperText={errors.email?getError(errors.email.type):null} name="email" inputRef={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} id="email-input" type="email" fullWidth={true} label="Email Address" variant="outlined" /><br/><br/>
-                <TextField error={errors.password?true:false} helperText={errors.password?getError(errors.password.type):null} name="password" inputRef={register({ required: true })} id="password-input" type="password" fullWidth={true} label="Password" variant="outlined" /><br/><br/>
-                <p className={styles.error}>{error}</p><br/>
-                <Button type="submit" size="large" variant="contained" color="primary" fullWidth={true} disableElevation>Login</Button>
+        <AuthHolder>
+            <form onSubmit={handleSubmit(doLogin)}>
+                <label htmlFor="login-email-input" id="login-email-label">Email Address</label>
+                <Input name="email" id="login-email-input" ref={register({ required:true, maxLength:50, pattern:/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })} type="email" placeholder="Enter Email Address" error={errors.email?getError(errors.email.type):null}/>
+                <br/>
+                <label htmlFor="login-password-input" id="login-password-label">Password</label>
+                <Input name="password" id="login-password-input" ref={register({ required: true })} type="password" placeholder="Enter Password" error={errors.password?getError(errors.password.type):null}/>
+                <p className="text-center text-red-600">{error}</p><br/>
+                <Button id="login-button" type="submit">Login</Button>
                 <br /><br/>
-                <p className={styles.center}><Link to="/auth/register">Don't have an account get started</Link></p>
+                <p className="text-center text-blue-700"><Link to="/auth/register">Don't have an account get started</Link></p>
             </form>
-        </InfoSplit>
+        </AuthHolder>
     )
 }
 
