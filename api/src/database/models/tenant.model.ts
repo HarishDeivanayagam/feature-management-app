@@ -7,7 +7,7 @@ export class Tenant {
     @PrimaryKey()
     id: string = v4();
   
-    @Property({ length:50, nullable:false })
+    @Property({ length:50, nullable:false, unique:true })
     name:string
 
     @OneToMany("User", "tenant")

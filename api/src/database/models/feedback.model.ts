@@ -33,7 +33,7 @@ export class Feedback {
     @Property({ default: false })
     isClosed:boolean;
 
-    @ManyToOne(()=>Segment)
+    @ManyToOne(()=>Segment, {nullable:true})
     segment:Segment;
 
     @Property()

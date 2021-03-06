@@ -4,6 +4,7 @@ import Boards from './pages/Boards';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Settings from './pages/Settings';
+import SignUp from './pages/Signup';
 import AccountProvider from './providers/AccountProvider';
 import AuthProtect from './providers/AuthProtect';
 
@@ -15,6 +16,7 @@ function App() {
         <BrowserRouter>
           <Switch>
             <Route path="/auth/login" exact component={Login}/>
+            <Route path="/auth/register" exact component={SignUp}/>
             <AuthProtect>
               <Route path="/" exact component={Home}/>
               <Route path="/boards" exact component={Boards}/>

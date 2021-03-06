@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Res } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
-import { CreateFeedbackDto } from "./feedback.dto";
+import { CreateFeedbackDto, SegmentFeedbackDto } from "./feedback.dto";
 import { FeedbackService } from "./feedback.service";
 
 @ApiTags("Feedback")
@@ -29,6 +29,20 @@ export class FeedbackController {
     public async getAllFeedback(@Res() res:Response){
         try {
             let resp = await this._feedbackService.allFeedback(res.locals.account.tenant);
+            res.status(HttpStatus.OK).json(resp);
+            return;
+        } catch(err) {
+            res.status(HttpStatus.BAD_REQUEST).json(err.message);
+            return;
+        }
+    }
+
+    @HttpCode(200)
+    @Put("segment")
+    @ApiBearerAuth()
+    public async segmentFeedback(@Res() res:Response, @Body() sgmtfdk:SegmentFeedbackDto){
+        try {
+            let resp = await this._feedbackService.segmentizeFeedback(sgmtfdk.segment, sgmtfdk.feedback, res.locals.account.tenant);
             res.status(HttpStatus.OK).json(resp);
             return;
         } catch(err) {

@@ -16,3 +16,11 @@ export class CreateFeedbackDto {
     @ApiProperty()
     creatorEmail: string;
 }
+
+export class SegmentFeedbackDto {
+    @ApiProperty()
+    feedback: number;
+
+    @ApiProperty()
+    segment: number;
+}
