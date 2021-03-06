@@ -2,7 +2,8 @@ import { atom } from 'jotai'
 
 export interface IAccountData {
     user: string;
-    customer: string;
+    userName:string;
+    tenant: string;
     email: string;
     isVerified: boolean;
     isAdmin: boolean;
@@ -11,7 +12,8 @@ export interface IAccountData {
 
 export const initialAccountState: IAccountData = {
     user: "",
-    customer: "",
+    userName:"",
+    tenant: "",
     email: "",
     isVerified: false,
     isAdmin: false,

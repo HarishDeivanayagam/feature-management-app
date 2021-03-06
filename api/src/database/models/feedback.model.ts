@@ -1,6 +1,7 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { Customer } from "./customer.model";
+import { Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Tenant } from "./tenant.model";
 import { FeedbackGroup } from "./feedbackgroup.model";
+import { Segment } from "./segment.model";
 
 @Entity({ tableName: "feedback" })
 export class Feedback {
@@ -14,23 +15,26 @@ export class Feedback {
     @Property({ length: 500 })
     description: string;
 
-    @ManyToOne(()=>Customer)
-    customer: Customer;
-
-    @ManyToOne(()=>FeedbackGroup, {nullable:true})
-    group: FeedbackGroup;
+    @ManyToOne(()=>Tenant)
+    tenant: Tenant;
 
     @Property({ default: false })
     isGrouped:boolean;
 
-    @Property({ default:0, nullable:false })
-    upvotes: number;
+    @ManyToOne(()=>FeedbackGroup, {nullable:true})
+    group: FeedbackGroup;
 
-    @Property({ length:50 })
+    @Property({ length:50, nullable:true })
     creatorName: string;
 
-    @Property({ length: 100 })
+    @Property({ length: 100, nullable:true })
     creatorEmail: string;
+
+    @Property({ default: false })
+    isClosed:boolean;
+
+    @ManyToOne(()=>Segment)
+    segment:Segment;
 
     @Property()
     createdAt: Date = new Date();

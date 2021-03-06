@@ -39,14 +39,15 @@ function Login() {
             setError("");
             let tempAccount: IAccountData = {
                 user: decoded['user'],
-                customer: decoded['customer'],
+                userName: decoded['user_name'],
+                tenant: decoded['tenant'],
                 email: decoded['email'],
                 isAdmin: decoded['is_admin'],
                 isVerified: decoded['is_verified'],
                 loggedIn: true
             }
             localStorage.setItem("user", decoded['user']);
-            localStorage.setItem("customer", decoded['customer']);
+            localStorage.setItem("tenant", decoded['tenant']);
             localStorage.setItem("auth", res['data']['authToken'])
             setAccountData(tempAccount);
             history.push("/boards")

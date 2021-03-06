@@ -1,20 +1,23 @@
 import { Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from 'uuid';
 
-@Entity({ tableName: "customers" })
-export class Customer {
+@Entity({ tableName: "tenants" })
+export class Tenant {
 
     @PrimaryKey()
-    uuid: string = v4();
+    id: string = v4();
   
     @Property({ length:50, nullable:false })
     name:string
 
-    @OneToMany("User", "customer")
+    @OneToMany("User", "tenant")
     users = new Collection(this);
 
-    @OneToMany("Feedback", "customer")
-    feedback = new Collection(this);
+    @OneToMany("Feedback", "tenant")
+    feedbacks = new Collection(this);
+
+    @OneToMany("Segment", "tenant")
+    tenants = new Collection(this);
 
     @Property({ nullable:false, default:true })
     isActive:boolean;

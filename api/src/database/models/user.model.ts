@@ -1,12 +1,12 @@
-import { Entity, ManyToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
-import { Customer } from "./customer.model";
+import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Tenant } from "./tenant.model";
 import { v4 } from 'uuid';
 
 @Entity({ tableName: 'users' })
 export class User {
 
     @PrimaryKey()
-    uuid: string = v4();  
+    id: string = v4();  
 
     @Property({ nullable: false, length: 150 })
     @Unique()
@@ -27,8 +27,11 @@ export class User {
     @Property({ nullable:false, default: false })
     isAdmin:boolean;
 
-    @ManyToOne(()=>Customer)
-    customer:Customer;
+    @ManyToOne(()=>Tenant)
+    tenant:Tenant;
+
+    @OneToMany("Segment", "creator")
+    segments = new Collection(this);
 
     @Property()
     createdAt: Date = new Date();

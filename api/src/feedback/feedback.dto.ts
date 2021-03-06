@@ -8,21 +8,11 @@ export class CreateFeedbackDto {
     description: string
 
     @ApiProperty()
-    customer: string;
+    tenant: string;
 
     @ApiProperty()
     creatorName: string;
 
     @ApiProperty()
     creatorEmail: string;
-}
-
-export class VoteFeedbackDto {
-
-    @ApiProperty()
-    feedback: number;
-
-    @ApiProperty()
-    customer: string;
-
 }

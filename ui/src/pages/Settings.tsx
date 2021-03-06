@@ -22,8 +22,6 @@ interface INewUser {
 
 function Settings() {
 
-
-
     const [accountData, setAccountData] = useAtom(accountAtom);
     const [myUsers, setMyUsers] = React.useState([]);
     const history = useHistory();
@@ -89,6 +87,7 @@ function Settings() {
             <div className="w-2/12">
                 <h1 className="mb-4">Settings</h1>
                 <h2 className="mb-4">User</h2>
+                <p>{accountData.userName}</p><br/>
                 <p>{accountData.email}</p><br/>
                 <Button onClick={logOut} color="red">Logout</Button><br/>
                 <span>----------------------------------</span><br/><br/>

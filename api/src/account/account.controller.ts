@@ -42,7 +42,6 @@ export class AccountController {
     @Post("/ping")
     async accountVerify(@Res() res:Response, @Req() req:Request) {
         try {
-            console.log(req.headers)
             let auth: string = req.headers.authorization;
             if (auth === undefined) {
               throw new Error('No token found');
@@ -66,7 +65,7 @@ export class AccountController {
     @UseGuards(AdminGuard)
     async addNewUser(@Res() res:Response, @Body() user:AddNewUserDto) {
         try {
-            let resp = await this._accountService.addUser(res.locals.account.customer, user.name, user.email, user.password, user.isAdmin);
+            let resp = await this._accountService.addUser(res.locals.account.tenant, user.name, user.email, user.password, user.isAdmin);
             res.status(HttpStatus.CREATED).json(resp);
             return;
         } catch (err) {
@@ -81,7 +80,7 @@ export class AccountController {
     @UseGuards(AdminGuard)
     async getMyUsers(@Res() res:Response) {
         try {
-            let resp = await this._accountService.getUsers(res.locals.account.customer);
+            let resp = await this._accountService.getUsers(res.locals.account.tenant);
             res.status(HttpStatus.OK).json(resp);
             return;
         } catch (err) {

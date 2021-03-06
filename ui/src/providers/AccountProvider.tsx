@@ -15,7 +15,8 @@ function AccountProvider(props:any) {
             let decoded:any = jwt.decode(token, {json: true});
             let tempAccount: IAccountData = {
                 user: decoded['user'],
-                customer: decoded['customer'],
+                userName: decoded['user_name'],
+                tenant: decoded['tenant'],
                 email: decoded['email'],
                 isAdmin: decoded['is_admin'],
                 isVerified: decoded['is_verified'],

@@ -15,6 +15,12 @@ export class FeedbackGroup {
     @OneToMany("Feedback", "group")
     feedbacks = new Collection(this);
 
+    @Property({ default:0 })
+    count: number;
+
+    @Property({ default:"ML_API"})
+    creator:string;
+    
     @Property()
     createdAt: Date = new Date();
 
