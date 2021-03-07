@@ -4,7 +4,6 @@ import { Tenant } from "src/database/models/tenant.model";
 import { Feedback } from "src/database/models/feedback.model";
 import { Segment } from "src/database/models/segment.model";
 import { FeedbackGroup } from "src/database/models/feedbackgroup.model";
-import e from "express";
 
 @Injectable()
 export class FeedbackService {
