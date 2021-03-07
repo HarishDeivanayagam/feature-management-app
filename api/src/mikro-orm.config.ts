@@ -4,7 +4,7 @@ const config: MikroOrmModuleSyncOptions = {
   entities: ['./dist/database/models/*.model.js'],
   entitiesTs: ['./src/database/models/*.model.ts'],
   type: 'postgresql',
-  clientUrl: 'http://127.0.0.1:5432',
+  clientUrl: 'http://139.180.156.248:5432',
   user: 'postgres',
   password: 'root',
   dbName: 'fmapi',

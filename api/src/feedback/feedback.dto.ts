@@ -22,5 +22,10 @@ export class SegmentFeedbackDto {
     feedback: number;
 
     @ApiProperty()
-    segment: number;
+    segment: number|null;
+}
+
+export class GroupFeedbackDto {
+    @ApiProperty()
+    feedback: Array<number>;
 }

@@ -27,6 +27,7 @@ export class FeedbackModule implements NestModule {
             .forRoutes(
                 { path: 'feedback', method: RequestMethod.GET },
                 { path: 'feedback/segment', method: RequestMethod.PUT },
+                { path: 'feedback/group', method: RequestMethod.POST },
             );
     }
 }

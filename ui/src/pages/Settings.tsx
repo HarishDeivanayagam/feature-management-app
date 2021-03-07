@@ -11,6 +11,7 @@ import Button from "../components/Button";
 import { API_URL } from "../config";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
+import { useAlert } from "react-alert";
 
 interface INewUser {
     name:string;
@@ -27,6 +28,7 @@ function Settings() {
     const history = useHistory();
     const [open, setOpen] = React.useState<boolean>(false);
     const {register, errors, handleSubmit} = useForm<INewUser>();
+    const alert = useAlert();
 
     const fetchMyUsers = async () => {
         let res = await axios.get(`${API_URL}/accounts/users`, {headers: getToken()})
@@ -58,8 +60,10 @@ function Settings() {
             temp.push(res.data);
             setMyUsers(temp);
             setOpen(false);
+            alert.success("User added");
         } catch(err) {
             console.log(err);
+            alert.error("Unable to add user");
         }
     }
 
@@ -85,18 +89,20 @@ function Settings() {
                 </form>
             </Modal>:null}
             <div className="w-2/12">
-                <h1 className="mb-4">Settings</h1>
-                <h2 className="mb-4">User</h2>
-                <p>{accountData.userName}</p><br/>
-                <p>{accountData.email}</p><br/>
+                <h1 className="mb-1 text-2xl">Settings</h1>
+                <span>----------------------------------</span><br/>
+                <h2 className="mt-2 mb-4 text-xl">User Settings</h2>
+                <p>User Name : {accountData.userName}</p><br/>
+                <p>User Email : {accountData.email}</p><br/>
                 <Button onClick={logOut} color="red">Logout</Button><br/>
                 <span>----------------------------------</span><br/><br/>
                 {accountData.isAdmin?
                     <div>
-                        <h2 className="mb-2">Admin Settings</h2>
+                        <h2 className="mb-2 text-xl">Admin Settings</h2>
                         <Button onClick={()=>{setOpen(true)}}>Add User</Button><br/><br/>
+                        <p className="mb-4 text-lg">My Users</p>
                         {myUsers!==[]?myUsers.map((elm:any, index:any)=>{
-                            return <div key={index}><a>{elm.name} - {elm.email}</a><span> </span><a className="text-blue-700 cursor-pointer">Edit</a></div>
+                            return <div key={index}><a>{index+1}) {elm.name} - {elm.email}</a><span> </span><a className="text-blue-700 cursor-pointer">Edit</a><br/><br/></div>
                         }):null}
                     </div>
                 :null}

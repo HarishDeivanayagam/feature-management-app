@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider as AlertProvider } from "react-alert";
+import AlertPop from './components/AlertPop';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AlertProvider template={AlertPop} position="bottom right" timeout={2000} offset="30px" transition="scale">
+      <App />
+    </AlertProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
