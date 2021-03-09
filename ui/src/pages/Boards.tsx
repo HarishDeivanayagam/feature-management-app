@@ -15,6 +15,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useForm } from "react-hook-form";
 import { getError } from "../components/ErrorHelper";
+import Loader from "../components/Loader";
 
 interface INewSegment {
     name:string;
@@ -30,7 +31,9 @@ function Boards() {
     const alert = useAlert();
     const [open, setOpen] = React.useState<boolean>(false);
     const {register, errors, handleSubmit} = useForm<INewSegment>();
-
+    const [exdOpen, exdSetOpen] = React.useState<boolean>(false);
+    const [marked, setMarked] = React.useState<boolean>(false);
+    const [markedMap, setMarkedMap] = React.useState<Array<any>>([]);
 
     const handleDrop = async (e:any, sid:any) => {
         let temp:any = [];
@@ -106,6 +109,44 @@ function Boards() {
         }
     }
 
+    const onSelectFeedback = (fid:number) => {
+        let temp:Array<any> = [];
+        feedbackData.forEach((elm:any, index:number)=>{
+            let t = {...elm};
+            if(elm.id == fid) {
+                if(t['selected']) {
+                    t['selected'] = false;
+                } else {
+                    t['selected'] = true;
+                }
+            }
+            temp.push(t);
+        })
+        setFeedbackData(temp);
+        setMarked(true);
+        let tmp = [...markedMap];
+        tmp.push(fid);
+        setMarkedMap(tmp);
+        let t:any = [];
+        
+    }
+
+    const clearMarked = () => {
+        let temp:Array<any> = [];
+        feedbackData.forEach((elm:any, index:number)=>{
+            let t = {...elm};
+            t['selected'] = false;
+            temp.push(t);
+        })
+        setFeedbackData(temp);
+        setMarked(false);
+        setMarkedMap([]); 
+    }
+
+    const groupMarked = () => {
+        console.log(markedMap);
+    }
+
 
     const getAllFeedback = async (force:boolean=false) => {
         if(feedbackData===initialFeedbackState || force===true) {
@@ -170,14 +211,26 @@ function Boards() {
                     <Button id="addsegment-button" type="submit">Create Segment</Button>
                 </form>
             </Modal>:null}
-            <h1 className="ml-2 text-2xl mb-2">Boards</h1>
+
+            {exdOpen?<Modal>
+                
+            </Modal>:null}
+            <div className="flex justify-between">
+                <div><h1 className="ml-2 text-2xl mb-2">Boards</h1></div>
+                <div>
+                    {marked?<div className="flex justify-start">
+                        <div className="mr-2"><Button onClick={groupMarked}>Group Marked</Button></div>
+                        <div><Button onClick={clearMarked}>Clear Marked</Button></div>
+                    </div>:null}
+                </div>
+            </div>
+            
             {feedbackLoading===false && segmentLoading === false ?
             <HorizontalList>
-
                 <FeedbackSegment id={null} title="Unsegmented" handleDrop={handleDrop}>
                     {feedbackData!==initialFeedbackState?feedbackData.map((felm:any, findex:number)=>{
                         if(felm.segment === null) {
-                            return <li key={findex}><Feedback id={felm.id} title={felm.feedback} description={felm.description} count={felm.count} creator={felm.creatorName} creatorEmail={felm.creatorEmail} handleDragStart={handleDragStart}/></li>
+                            return <li key={findex}><Feedback id={felm.id} selected={felm.selected} onSelect={onSelectFeedback} title={felm.feedback} description={felm.description} count={felm.count} creator={felm.creatorName} creatorEmail={felm.creatorEmail} handleDragStart={handleDragStart}/></li>
                         }
                     }):null}
                 </FeedbackSegment>
@@ -188,7 +241,7 @@ function Boards() {
                             {
                             feedbackData.map((felm:any, findex:number)=>{
                                 if(felm.segment===selm.id) {
-                                    return <li key={findex}><Feedback id={felm.id} title={felm.feedback} count={felm.count} description={felm.description} creator={felm.creatorName} creatorEmail={felm.creatorEmail} handleDragStart={handleDragStart}/></li>
+                                    return <li key={findex}><Feedback id={felm.id} selected={felm.selected} onSelect={onSelectFeedback} title={felm.feedback} count={felm.count} description={felm.description} creator={felm.creatorName} creatorEmail={felm.creatorEmail} handleDragStart={handleDragStart}/></li>
                                 }
                             })
                         }</FeedbackSegment>)
@@ -200,7 +253,7 @@ function Boards() {
                         <button className="text-4xl mt-80 pl-4 pr-4 pt-1 pb-2 rounded-full bg-gray-900 text-white hover:bg-gray-600 transition-colors focus:outline-none" onClick={()=>{setOpen(true)}}>+</button>
                     </div>
                 </div>            
-                </HorizontalList>:<div>Loading...</div>}
+                </HorizontalList>:<Loader/>}
         </AppContainer>
     )
 }

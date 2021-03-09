@@ -19,7 +19,6 @@ export class SegmentController {
             res.status(HttpStatus.OK).json(resp);
             return;
         } catch(err) {
-            console.log(err)
             res.status(HttpStatus.BAD_REQUEST).json(err.message);
             return;
         }
@@ -34,7 +33,6 @@ export class SegmentController {
             res.status(HttpStatus.OK).json(resp);
             return;
         } catch(err) {
-            console.log(err)
             res.status(HttpStatus.BAD_REQUEST).json(err.message);
             return;
         }
