@@ -1,4 +1,5 @@
-import { Collection, Entity, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { Tenant } from './tenant.model';
 
 @Entity({ tableName: 'feedback_group' })
 export class FeedbackGroup {
@@ -18,8 +19,11 @@ export class FeedbackGroup {
     @Property({ default:0 })
     count: number;
 
-    @Property({ default:"ML_API"})
+    @Property({ default:"EXT_API"})
     creator:string;
+
+    @ManyToOne(()=>Tenant)
+    tenant: Tenant;
     
     @Property()
     createdAt: Date = new Date();

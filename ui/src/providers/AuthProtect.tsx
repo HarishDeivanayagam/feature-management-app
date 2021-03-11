@@ -1,5 +1,6 @@
 import { useAtom } from "jotai";
 import React from "react";
+import Loader from "../components/Loader";
 import accountAtom, { IAccountData } from "../data/accountData";
 
 function AuthProtect(props:any) {
@@ -15,7 +16,7 @@ function AuthProtect(props:any) {
         }
     },[])
 
-    if(loading) return <div>Loading...</div>
+    if(loading) return <Loader/>
 
     return (
         <div>{props.children}</div>

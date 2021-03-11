@@ -14,13 +14,13 @@ function Streams() {
                 <h1 className="text-lg mb-2">External API</h1>
                 <p className="text-lg mb-2">Api Defenition</p>
                 <p>Link*: https://feedbackgru.com/api/feedback</p>
-                <p><span>Body*: </span><pre>{`{ 
+                <span>Body*: </span><pre>{`{ 
     title: string, 
     description: string, 
     creator: string, 
     creatorEmail: string, 
     tenant: ${accountData.tenant}
-}`}</pre></p>
+}`}</pre>
                 <p className="text-red-900 mt-2">Note: The creator's email and name could be set through your authentication keys.</p>
             </div>
         </AppContainer>

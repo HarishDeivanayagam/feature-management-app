@@ -5,7 +5,7 @@ import AuthHolder from "../components/AuthHolder";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { getError } from '../components/ErrorHelper';
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { API_URL } from "../config";
 
 interface ICreateData {
@@ -25,7 +25,7 @@ function SignUp() {
     const createAccount = async (data:ICreateData) => {
         try {
             if(data.password===data.cpassword) {
-                let res:any = await axios.post(`${API_URL}/accounts`, data);
+                let res:AxiosResponse = await axios.post(`${API_URL}/accounts`, data);
                 setError("");
                 history.push("/auth/login")        
             } else {

@@ -3,6 +3,7 @@ import React from "react";
 import accountAtom, { IAccountData } from '../data/accountData';
 import jwt from 'jsonwebtoken';
 import { deleteTokens } from "../metal/auth";
+import Loader from "../components/Loader";
 
 function AccountProvider(props:any) {
 
@@ -35,7 +36,7 @@ function AccountProvider(props:any) {
         assignAccount();
     },[])
 
-    if(loading) return <div>Loading...</div>
+    if(loading) return <Loader/>
 
     return (
         <div>

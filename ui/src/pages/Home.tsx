@@ -1,4 +1,5 @@
 import React from "react";
+import Loader from "../components/Loader";
 
 function Home() {
 
@@ -6,7 +7,7 @@ function Home() {
         window.location.href = "/boards"
     },[])
     
-    return <div>Loading...</div>
+    return <Loader/>
 }
 
 export default Home;

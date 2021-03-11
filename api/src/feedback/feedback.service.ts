@@ -65,27 +65,47 @@ export class FeedbackService {
 
     public async groupFeedback(feedback: Array<number>, tenant:string) {
         try {
-            let group = new FeedbackGroup();
-            
+            let currTenant = await this._em.findOne(Tenant, { id: tenant });
             let temp = await this._em.findOne(Feedback, { id: feedback[0], tenant: tenant });
-            group.feedback = temp.feedback;
-            group.description = temp.description;
-            group.count = 0;
-            for(let i in feedback) { 
+            let prevGrouped:boolean = false;
+            let prevGroup:FeedbackGroup;    
+            for(let i in feedback) {
                 let fdk = await this._em.findOne(Feedback, { id: feedback[i], tenant: tenant });
                 if(fdk.isGrouped) {
-                    throw new Error("Already grouped");
+                    prevGrouped = true;
+                    prevGroup = fdk.group;
                 }
-                fdk.group = group;
-                fdk.segment = temp.segment;
-                fdk.isGrouped = true;
-                this._em.persist(fdk);
-                group.count += 1;
             }
-            this._em.persist(group);
+            if(prevGrouped) {
+                for(let i in feedback) {
+                    let fdk = await this._em.findOne(Feedback, { id: feedback[i], tenant: tenant });
+                    fdk.group = prevGroup;
+                    fdk.isGrouped = true;
+                    fdk.segment = temp.segment;
+                    prevGroup.count += 1;
+                    this._em.persist(fdk);
+                }
+                this._em.persist(prevGroup);
+            } else {
+                let group = new FeedbackGroup();
+                group.feedback = temp.feedback;
+                group.description = temp.description;
+                group.count = 0;
+                group.tenant = currTenant;
+                for(let i in feedback) {
+                    let fdk = await this._em.findOne(Feedback, { id: feedback[i], tenant: tenant });
+                    fdk.group = group;
+                    fdk.isGrouped = true;
+                    fdk.segment = temp.segment;
+                    group.count += 1;
+                    this._em.persist(fdk);
+                }
+                this._em.persist(group);
+            }
             await this._em.flush();
             return "Feedbacks Grouped";
         }  catch(err) {
+            console.log(err)
             throw new Error("Unable to group feedback")
         }
     }

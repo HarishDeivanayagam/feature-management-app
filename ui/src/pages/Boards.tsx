@@ -4,7 +4,7 @@ import HorizontalList from "../components/HorizontalList";
 import FeedbackSegment from "../components/FeedbackSegment";
 import { useAtom } from "jotai";
 import segmentAtom, { initialSegmentState } from "../data/segmentData";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { API_URL } from "../config";
 import { getToken } from "../metal/auth";
 import feedbackAtom, { initialFeedbackState } from "../data/feedbackData";
@@ -32,8 +32,8 @@ function Boards() {
     const [open, setOpen] = React.useState<boolean>(false);
     const {register, errors, handleSubmit} = useForm<INewSegment>();
     const [exdOpen, exdSetOpen] = React.useState<boolean>(false);
-    const [marked, setMarked] = React.useState<boolean>(false);
     const [markedMap, setMarkedMap] = React.useState<Array<any>>([]);
+    const [markable, setMarkable] = React.useState<boolean>(false);
 
     const handleDrop = async (e:any, sid:any) => {
         let temp:any = [];
@@ -79,7 +79,7 @@ function Boards() {
 
     const createNewSegment = async (data:INewSegment) => {
         try {
-            let res = await axios.post(`${API_URL}/segments`, data, {headers: getToken()});
+            let res:AxiosResponse = await axios.post(`${API_URL}/segments`, data, {headers: getToken()});
             let temp = [...segmentData];
             temp.push(res.data);
             setSegmentData(temp);
@@ -95,7 +95,7 @@ function Boards() {
     const getAllSegments = async (force:boolean=false) => {
         if(segmentData===initialSegmentState || force===true) {
             try {
-                let res = await axios.get(`${API_URL}/segments`, { headers: getToken() });
+                let res:AxiosResponse = await axios.get(`${API_URL}/segments`, { headers: getToken() });
                 setSegmentData(res.data);
                 setSegmentLoading(false);
                 alert.success("Segments loaded");
@@ -111,6 +111,10 @@ function Boards() {
 
     const onSelectFeedback = (fid:number) => {
         let temp:Array<any> = [];
+        let tmap:Array<any> = [...markedMap];
+        if(!markable) {
+            return
+        }
         feedbackData.forEach((elm:any, index:number)=>{
             let t = {...elm};
             if(elm.id == fid) {
@@ -123,12 +127,34 @@ function Boards() {
             temp.push(t);
         })
         setFeedbackData(temp);
-        setMarked(true);
-        let tmp = [...markedMap];
-        tmp.push(fid);
-        setMarkedMap(tmp);
-        let t:any = [];
+
+        if(tmap.length > 0) {
+            let stmap:Array<any> = [];
+            let given:boolean = false;
+            tmap.forEach((elm:any)=>{
+                if(elm===fid) {
+                    given = true;
+                } else {
+                    stmap.push(elm);
+                }
+            })
+            if(!given) {
+                stmap.push(fid);
+            }
+            setMarkedMap(stmap);
+            if(stmap.length<1) {
+                setMarkable(false)
+            }
+        } else {
+            tmap.push(fid);
+            setMarkedMap(tmap);
+            if(tmap.length<1) {
+                setMarkable(false)
+            }
+
+        }
         
+
     }
 
     const clearMarked = () => {
@@ -139,12 +165,26 @@ function Boards() {
             temp.push(t);
         })
         setFeedbackData(temp);
-        setMarked(false);
         setMarkedMap([]); 
+        setMarkable(false);
     }
 
-    const groupMarked = () => {
-        console.log(markedMap);
+
+    const groupMarked = async () => {
+        let data = { 
+            feedback: markedMap 
+        };
+        console.log(data)
+        try {
+            let res:AxiosResponse = await axios.post(`${API_URL}/feedback/group`, data , {headers:getToken()})
+            alert.success("Grouped selected feedback");
+            clearMarked();
+            getAllFeedback(true);
+        } catch(err) {
+            console.log(err);
+            alert.error("Unable to group feedback")
+        }
+        setMarkable(false);
     }
 
 
@@ -152,7 +192,7 @@ function Boards() {
         if(feedbackData===initialFeedbackState || force===true) {
             try {
                 // Fetching data from api
-                let res = await axios.get(`${API_URL}/feedback`, { headers: getToken() });
+                let res:AxiosResponse = await axios.get(`${API_URL}/feedback`, { headers: getToken() });
 
                 // Create an map to store the groupid of duplicate feedback
                 let gmap = new Map();
@@ -195,7 +235,7 @@ function Boards() {
     React.useEffect(()=>{
         getAllFeedback();
         getAllSegments();
-        
+
     },[])
 
 
@@ -218,10 +258,11 @@ function Boards() {
             <div className="flex justify-between">
                 <div><h1 className="ml-2 text-2xl mb-2">Boards</h1></div>
                 <div>
-                    {marked?<div className="flex justify-start">
-                        <div className="mr-2"><Button onClick={groupMarked}>Group Marked</Button></div>
-                        <div><Button onClick={clearMarked}>Clear Marked</Button></div>
-                    </div>:null}
+                   <div className="flex justify-start">
+                        {markedMap.length>1?<div className="mr-2"><Button onClick={groupMarked}>Group Marked</Button></div>:null}
+                        {markedMap.length>0?<div><Button onClick={clearMarked}>Clear Marked</Button></div>:null}
+                        {!markable?<div><Button onClick={()=>{setMarkable(true)}}>Select</Button></div>:null}
+                    </div>
                 </div>
             </div>
             

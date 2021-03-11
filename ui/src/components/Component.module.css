@@ -1,0 +1,22 @@
+.Modal {
+    margin-top: 25vh;
+    z-index: 5;
+    box-shadow: 10px 10px 500px gray;
+    position: fixed;
+    background: white;
+    border-radius: 5px;
+    transition: all .1s linear;
+    padding: 1em;
+    overflow: auto;
+    animation: from-top;
+    animation-duration: .6s;
+}
+
+@keyframes from-top {
+    from {
+      transform: translateY(-50px);
+    }
+    to {
+      transform: translateY(0px);
+    }
+}

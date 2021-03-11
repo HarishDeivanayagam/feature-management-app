@@ -14,7 +14,10 @@ export class Tenant {
     users = new Collection(this);
 
     @OneToMany("Feedback", "tenant")
-    feedbacks = new Collection(this);
+    feedback = new Collection(this);
+
+    @OneToMany("FeedbackGroup", "tenant")
+    feedbackGroup = new Collection(this);
 
     @OneToMany("Segment", "tenant")
     tenants = new Collection(this);

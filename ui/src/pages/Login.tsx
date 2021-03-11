@@ -1,5 +1,5 @@
 import React from "react";
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
@@ -10,6 +10,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import AuthHolder from "../components/AuthHolder";
 import { API_URL } from "../config";
+import Loader from "../components/Loader";
 
 interface ILoginData {
     email:string;
@@ -34,7 +35,7 @@ function Login() {
 
     const doLogin = async (data:ILoginData) => {
         try {
-            let res:any = await axios.post(`${API_URL}/accounts/authenticate`, data);
+            let res:AxiosResponse = await axios.post(`${API_URL}/accounts/authenticate`, data);
             let decoded:any = jwt.decode(res['data']['authToken'], {json: true});
             setError("");
             let tempAccount: IAccountData = {
@@ -57,7 +58,7 @@ function Login() {
         }
     }
 
-    if(loading) return <div>Loading...</div>
+    if(loading) return <Loader/>
 
     return (
         <AuthHolder>

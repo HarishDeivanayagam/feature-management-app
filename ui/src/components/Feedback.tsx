@@ -17,8 +17,7 @@ function Feedback(props:any) {
     const handleDragOver = (e:any) => {
         e.stopPropagation();
     }
-
-
+ 
     return (
         <div id={`${props.id}`} draggable={true} onDragOver={handleDragOver} onDragStart={e=>{props.handleDragStart(e, props.id)}} onClick={()=>{props.onSelect(props.id)}} className={`${props.selected?"border-4 border-green-700 border-solid":""} w-full mt-1 mb-3 bg-white h-full rounded-md shadow-sm p-3 cursor-move`}>
             <div className="flex justify-start">
