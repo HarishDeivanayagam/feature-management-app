@@ -4,6 +4,8 @@ import { Tenant } from "src/database/models/tenant.model";
 import { Feedback } from "src/database/models/feedback.model";
 import { Segment } from "src/database/models/segment.model";
 import { FeedbackGroup } from "src/database/models/feedbackgroup.model";
+import { Cron } from '@nestjs/schedule';
+import axios from 'axios';
 
 @Injectable()
 export class FeedbackService {
@@ -109,4 +111,24 @@ export class FeedbackService {
             throw new Error("Unable to group feedback")
         }
     }
+
+    @Cron('45 * * * * *')
+    public async handleCron() {
+      let tenant = await this._em.find(Tenant, {});
+      tenant.forEach(async (elm,_)=>{
+        let feedbacks = this.allFeedback(elm.id);
+        for(let i=0; i<feedbacks['length']/2; i++) {
+            let obj = {
+                feedback_1: feedbacks[i].feedback,
+                feedback_2: feedbacks[i+1].feedback
+            }
+            let res = await axios.post('http://localhost:5000/similarity', obj)
+            if(res.data === "The two texts are similar") {
+                this.groupFeedback([feedbacks[i].id, feedbacks[i+1].id], elm.id);
+            }
+        }
+      })
+      
+    }
+  
 }

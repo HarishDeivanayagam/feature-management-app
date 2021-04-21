@@ -102,7 +102,7 @@ function Settings() {
                         <Button onClick={()=>{setOpen(true)}}>Add User</Button><br/><br/>
                         <p className="mb-4 text-lg">My Users</p>
                         {myUsers!==[]?myUsers.map((elm:any, index:any)=>{
-                            return <div key={index}><a>{index+1}) {elm.name} - {elm.email}</a><span> </span><a className="text-blue-700 cursor-pointer">Edit</a><br/><br/></div>
+                            return <div key={index}><a>{index+1}) {elm.name} - {elm.email}</a><span> </span><a className="text-blue-700 cursor-pointer"></a><br/><br/></div>
                         }):null}
                     </div>
                 :null}

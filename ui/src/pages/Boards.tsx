@@ -235,7 +235,6 @@ function Boards() {
     React.useEffect(()=>{
         getAllFeedback();
         getAllSegments();
-
     },[])
 
 

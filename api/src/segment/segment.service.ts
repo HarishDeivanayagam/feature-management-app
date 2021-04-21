@@ -36,4 +36,7 @@ export class SegmentService {
             throw new Error("Unable to fetch the segments");
         }
     }
+
+
+
 }

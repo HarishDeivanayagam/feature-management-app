@@ -13,11 +13,11 @@ function Streams() {
             <div className="mt-2 rounded-md h-full w-full bg-gray-200 border-t-4 border-solid border-gray-800 p-4">
                 <h1 className="text-lg mb-2">External API</h1>
                 <p className="text-lg mb-2">Api Defenition</p>
-                <p>Link*: https://feedbackgru.com/api/feedback</p>
+                <p>Link*: http://localhost:8080/api/feedback</p>
                 <span>Body*: </span><pre>{`{ 
     title: string, 
     description: string, 
-    creator: string, 
+    creatorName: string, 
     creatorEmail: string, 
     tenant: ${accountData.tenant}
 }`}</pre>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Analytics from './pages/Analytics';
 import Boards from './pages/Boards';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -21,6 +22,7 @@ function App() {
             <AuthProtect>
               <Route path="/" exact component={Home}/>
               <Route path="/boards" exact component={Boards}/>
+              <Route path="/analytics" exact component={Analytics}/>
               <Route path="/streams" exact component={Streams}/>
               <Route path="/settings" exact component={Settings}/>
             </AuthProtect>
